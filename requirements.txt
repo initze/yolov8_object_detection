@@ -1,0 +1,8 @@
+# requirements for using the yolov8 based object detection
+# Usage: pip install -r requirements.txt
+# recemmended to setup a conda environment with python=3.9 first
+# pip installs ----------------------------------------
+ultralytics
+pandas
+geopandas
+jupyterlab
