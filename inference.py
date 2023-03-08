@@ -44,9 +44,10 @@ def main():
         results = model(source=image, conf=confidence, save=True)
 
     # check if reports dir exists
+    
     if not save_dir.exists():
-        os.makedirs()
-
+        os.makedirs(save_dir)
+    
     # Save outputs
     df_output.to_html(save_dir / 'detected_features.html')
     df_output.to_csv(save_dir / 'detected_features.csv', index=False)
