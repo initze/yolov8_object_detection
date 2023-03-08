@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MIPPS-Config-File>
+<MIPPS-Config-File versionMajor="0" versionMinor="8">
+    <QVariantMap>
+        <QVariantList name="Filters">
+            <QVariantMap>
+                <QVariantMap name="Filter">
+                    <NamedEnum name="Bayer selection" type="NamedEnum::BayerSelectionMode" value="BayerSelection_ALL"/>
+                    <double name="a" value="-1.45354"/>
+                    <bool name="analyze image" value="false"/>
+                    <double name="b" value="2.55443"/>
+                    <double name="c" value="-2.6616"/>
+                    <double name="cx" value="-0.00384516"/>
+                    <double name="cy" value="0.0663756"/>
+                    <bool name="enabled" value="true"/>
+                    <QString name="name" value="Devignetting"/>
+                </QVariantMap>
+            </QVariantMap>
+            <QVariantMap>
+                <QVariantMap name="Filter">
+                    <bool name="enabled" value="true"/>
+                    <NamedEnum name="mode" type="NamedEnum::DebayerMode" value="DebayerDCB"/>
+                    <QString name="name" value="Debayer"/>
+                </QVariantMap>
+            </QVariantMap>
+            <QVariantMap>
+                <QVariantMap name="Filter">
+                    <bool name="enabled" value="true"/>
+                    <double name="max" value="1"/>
+                    <double name="min" value="1"/>
+                    <QString name="name" value="Auto-Stretch"/>
+                </QVariantMap>
+            </QVariantMap>
+            <QVariantMap>
+                <QVariantMap name="Filter">
+                    <bool name="enabled" value="false"/>
+                    <double name="max" value="100"/>
+                    <double name="min" value="0"/>
+                    <QString name="name" value="Linear-Stretch"/>
+                </QVariantMap>
+            </QVariantMap>
+            <QVariantMap>
+                <QVariantMap name="Filter">
+                    <bool name="enabled" value="true"/>
+                    <double name="height" value="40"/>
+                    <NamedEnum name="mode" type="NamedEnum::InterpolationMode" value="InterpolateNearestNeighbour"/>
+                    <QString name="name" value="Scale"/>
+                    <bool name="percentage" value="true"/>
+                    <double name="width" value="40"/>
+                </QVariantMap>
+            </QVariantMap>
+            <QVariantMap>
+                <QVariantMap name="Filter">
+                    <QString name=".outputDir" value=""/>
+                    <bool name="compression" value="true"/>
+                    <bool name="enabled" value="true"/>
+                    <NamedEnum name="format" type="NamedEnum::OSAKImageFormat" value="OSAKImageFormat_jpg"/>
+                    <QString name="name" value="Write"/>
+                    <QString name="prefix" value=""/>
+                    <int name="quality" value="85"/>
+                    <QString name="suffix" value=""/>
+                </QVariantMap>
+            </QVariantMap>
+        </QVariantList>
+    </QVariantMap>
+</MIPPS-Config-File>
