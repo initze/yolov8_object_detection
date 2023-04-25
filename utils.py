@@ -1,6 +1,10 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
+from rio_cogeo.cogeo import cog_validate, cog_info
+import rasterio
+import shapely
+from leafmap import image_to_cog
 
 def get_results(yolo_result):
     """
@@ -45,3 +49,15 @@ def get_class_counts(df_results, image_list=None, get_max_proba=True):
         df_class_count = pd.concat([df_class_count, df_image_ids_add])
     
     return df_class_count.replace(np.nan, 0).sort_index().reset_index(drop=False).rename(columns={'index':'image_id'})
+
+       
+def row_to_geom(row):
+    with rasterio.open(row.raster_file) as src: 
+        rows, cols = src.shape
+        ymin, ymax = row['y']-(row['y2']/2), row['y']+(row['y2']/2)
+        xmin, xmax = row['x']-(row['x2']/2), row['x']+(row['x2']/2)
+        uly, ulx = src.xy(ymax*rows, xmin*cols)
+        lry, lrx = src.xy(ymin*rows, xmax*cols)
+        #lrx, lry =  src.xy((row['y'] + row['y2']) * rows, (row['x'] + row['x2']) * cols)
+    geom = shapely.geometry.box(uly, ulx, lry, lrx)
+    return geom
