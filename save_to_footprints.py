@@ -7,13 +7,14 @@ import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', type=str, required=True)
+parser.add_argument('--data_dir', type=str, required=True, default='output')
 args = parser.parse_args()
 
 
 def main():
     # setup paths
     ds_name = args.name
-    save_dir = Path('output') / ds_name
+    save_dir = Path(args.data_dir) / ds_name
 
     # load inference results
     df_class_count = pd.read_csv(save_dir / 'detected_image_summary.csv')
@@ -43,6 +44,7 @@ def main():
     gdf_out_centroid['geometry'] = gdf_out.centroid
 
     outfile_centroid = save_dir / (ds_name+ '_vector_centroid.gpkg')
+    print(outfile_centroid)
     gdf_out_centroid.to_file(outfile_centroid)
 
 if __name__=='__main__':

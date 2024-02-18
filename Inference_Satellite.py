@@ -101,7 +101,10 @@ def main():
         # YOLOv8 run
         outname = run_yolo_detection(MODEL_BASE_DIR, TILESIZE, PREDICTION_MODEL, outdir, model_name=MODEL_NAME, dry_run=False)
         # vector output creation
-        run_results_to_vector(MODEL_BASE_DIR, outdir, outname)
+        try:
+            run_results_to_vector(MODEL_BASE_DIR, outdir, outname)
+        except:
+            print('No output labels, skip writing vector file')
         #"""
 
 if __name__=="__main__":

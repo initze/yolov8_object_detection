@@ -13,12 +13,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--name', type=str, required=True)
 parser.add_argument('--conf', type=float, default=0.14)
 parser.add_argument('--model', type=str, default='models/yolov8l_MACS_beaver_v10best.pt')
+parser.add_argument('--output_dir', type=str, default='output')
 args = parser.parse_args()
 
 # setup images
 project_name = args.name#'20210703-011838_57_NP_RabbitCreek'
 image_dir = Path('data') / project_name
-save_dir = Path(f'output/{project_name}')
+save_dir = Path(args.output_dir) / project_name
+#save_dir = Path(f'output/{project_name}')
 save_dir_images = save_dir / 'images'
 confidence = args.conf#0.14
 image_list = list(image_dir.glob('*.jpg'))
