@@ -40,7 +40,8 @@ def main(
     chunksize: Annotated[int, typer.Option(help="Chunk size for processing")] = 20,
     mipps_file: Annotated[str, typer.Option(help="Path to the MIPPS file")] = r"N:\Response\Restricted_Airborne\MACS\Alaska\2024_Perma-X_Alaska\05_mipps_scripts\MACS_Polar_RGB_mipps\111498_per_pixel_scale_jpg75_rescale.mipps",
     mipps_dir: Annotated[str, typer.Option(help="Path to the MIPPS directory")] = r"C:\Program Files\DLR MACS-Box\bin",
-    mipps_bin: Annotated[str, typer.Option(help="Path to the MIPPS binary")] = r"..\tools\Conv\mipps.exe"
+    mipps_bin: Annotated[str, typer.Option(help="Path to the MIPPS binary")] = r"..\tools\Conv\mipps.exe",
+    n_projects: Annotated[int, typer.Option(help="Process defined number of projects (e.g. for debugging)")] = None,
 ):
     """
     Process MACS images and convert them to jpg files.
@@ -49,7 +50,7 @@ def main(
     projects = [x for x in data_dir.iterdir() if (x.is_dir() and x.name.startswith('202'))]
 
     # Process projects
-    for project_name in projects[:]:
+    for project_name in projects[:n_projects]:
         print(f'Processing: {project_name}')
         indir = data_dir / project_name
         outdir = out_dir_base / indir.name
