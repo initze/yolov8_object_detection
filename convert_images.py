@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
-
+import os
+from pathlib import Path
+from typing import List, Optional
 import numpy as np
 import typer
 from tqdm import tqdm
@@ -62,6 +64,10 @@ def main(
     filter: Annotated[
         str, typer.Option(help="Filter to boil down to specific project name")
     ] = None,
+    project_names: Annotated[
+        Optional[List[str]],
+        typer.Option(help="List of specific project names to process"),
+    ] = None,
 ):
     """
     Process MACS images and convert them to jpg files.
@@ -71,9 +77,13 @@ def main(
         x for x in data_dir.iterdir() if (x.is_dir() and x.name.startswith("202"))
     ]
 
-    # filter to selected regex
+    # Filter to selected regex
     if filter:
         projects = [x for x in projects if filter in x.name]
+
+    # Filter projects based on project_names if provided
+    if project_names:
+        projects = [x for x in projects if x.name in project_names]
 
     # Process projects
     for project_name in projects[:n_projects]:
