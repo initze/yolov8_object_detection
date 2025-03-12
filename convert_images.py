@@ -1,8 +1,7 @@
 import os
 from pathlib import Path
-import os
-from pathlib import Path
 from typing import List, Optional
+
 import numpy as np
 import typer
 from tqdm import tqdm
@@ -85,8 +84,17 @@ def main(
     if project_names:
         projects = [x for x in projects if x.name in project_names]
 
+    # Filter projects that already exist
+    projects = [
+        project for project in projects if not (out_dir_base / project.name).exists()
+    ]
+
+    # filter to number of projects
+    projects = projects[:n_projects]
+
     # Process projects
-    for project_name in projects[:n_projects]:
+    print(f"Start processing {len(projects)} projects!")
+    for project_name in projects:
         print(f"Processing: {project_name}")
         indir = data_dir / project_name
         outdir = out_dir_base / indir.name
