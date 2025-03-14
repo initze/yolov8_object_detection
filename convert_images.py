@@ -76,6 +76,9 @@ def main(
         x for x in data_dir.iterdir() if (x.is_dir() and x.name.startswith("202"))
     ]
 
+    # sort projects by name
+    projects.sort()
+
     # Filter to selected regex
     if filter:
         projects = [x for x in projects if filter in x.name]
@@ -88,7 +91,7 @@ def main(
     projects = [
         project for project in projects if not (out_dir_base / project.name).exists()
     ]
-
+    
     # filter to number of projects
     projects = projects[:n_projects]
 
