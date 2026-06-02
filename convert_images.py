@@ -19,6 +19,7 @@ def process_files(
     outdir: Path,
     mipps_bin: str,
     mipps_file: str,
+    jobs: int=60,
 ):
     infiles = list(indir.glob("*RGB*/*"))
     infiles = [f'"{str(f)}"' for f in infiles]  # get posix files
@@ -32,7 +33,7 @@ def process_files(
     for df in tqdm(np.array_split(infiles, split)):
         outlist = " ".join(df)
         os.makedirs(outdir, exist_ok=True)
-        s = f'{mipps_bin} -c={mipps_file} -o="{outdir}" -j=4 {outlist}'
+        s = f'{mipps_bin} -c={mipps_file} -o="{outdir}" -j={jobs} {outlist}'
         # run mipps call
         os.system(s)
 
