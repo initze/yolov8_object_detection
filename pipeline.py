@@ -1,3 +1,4 @@
+import argparse
 import os
 from pathlib import Path
 
@@ -6,64 +7,89 @@ import pandas as pd
 import yaml
 from joblib import Parallel, delayed  # noqa: F401
 
-CONFIG_PREPROCESSING = Path("configs/conversion/image_config_2025_6016px.yml")
-CONFIG_INFERENCE = Path("configs/inference/image_config_2025_inference.yml")
+# CONFIG_PREPROCESSING = Path("configs/conversion/image_config_2025_6016px.yml")
+# CONFIG_INFERENCE = Path("configs/inference/image_config_2025_inference.yml")
 N_JOBS = 6
 DRY_RUN = False
 N_PROJECTS = None
 AUTO_PROJECTS = True
 
-if AUTO_PROJECTS:
-    # read data_dir from CONFIG_PREPROCESSING
-    with open(CONFIG_PREPROCESSING, "r") as f:
-        config_preprocessing = yaml.safe_load(f)
 
-    with open(CONFIG_INFERENCE, "r") as f:
-        config_inference = yaml.safe_load(f)
+def main():
+    parser = argparse.ArgumentParser(description="Run image inference on a project.")
+    parser.add_argument(
+        "--config-preprocessing",
+        type=Path,
+        help="Path to the preprocessing configuration.",
+    )
+    parser.add_argument(
+        "--config-inference", type=Path, help="Path to the inference configuration."
+    )
+    args = parser.parse_args()
 
-    data_dir = Path(config_preprocessing["data_dir"])
+    CONFIG_PREPROCESSING = args.config_preprocessing
+    CONFIG_INFERENCE = args.config_inference
 
-    model_name = Path(config_inference["model"]).stem
-    target_dir = Path(config_inference["output_dir"]) / model_name
+    if AUTO_PROJECTS:
+        # read data_dir from CONFIG_PREPROCESSING
+        with open(CONFIG_PREPROCESSING, "r") as f:
+            config_preprocessing = yaml.safe_load(f)
 
-    projects_raw = data_dir.glob("*")
-    # filter down to directories starting with "20" (e.g. 20250720-183714_[ - ])
-    PROJECTS = [
-        p.name for p in projects_raw if p.is_dir() and (p.name.startswith("20"))
-    ]
-    # filter down to not yet processed projects
-    # PROJECTS = [p for p in PROJECTS if not (target_dir / p).exists() else print(f"Project {p} already exists in target directory, skipping...")]
+        with open(CONFIG_INFERENCE, "r") as f:
+            config_inference = yaml.safe_load(f)
 
-    PROJECTS_RUN = []
-    for p in PROJECTS:
-        if not (target_dir / p).exists():
-            PROJECTS_RUN.append(p)
-        else:
-            print(f"Project {p} already exists in target directory, skipping...")
+        data_dir = Path(config_preprocessing["data_dir"])
 
-    PROJECTS = PROJECTS_RUN
-else:
-    raise NotImplementedError(
-        "Manual project list is not implemented yet. Please set AUTO_PROJECTS to True."
+        model_name = Path(config_inference["model"]).stem
+        target_dir = Path(config_inference["output_dir"])  # / model_name
+
+        projects_raw = data_dir.glob("*")
+        # filter down to directories starting with "20" (e.g. 20250720-183714_[ - ])
+        PROJECTS = [
+            p.name for p in projects_raw if p.is_dir() and (p.name.startswith("20"))
+        ]
+        # filter down to not yet processed projects
+        # PROJECTS = [p for p in PROJECTS if not (target_dir / p).exists() else print(f"Project {p} already exists in target directory, skipping...")]
+
+        PROJECTS_RUN = []
+        for p in PROJECTS:
+            if not (target_dir / p).exists():
+                PROJECTS_RUN.append(p)
+            else:
+                print(f"Project {p} already exists in target directory, skipping...")
+
+        PROJECTS = PROJECTS_RUN
+    else:
+        raise NotImplementedError(
+            "Manual project list is not implemented yet. Please set AUTO_PROJECTS to True."
+        )
+
+    # sort projects by name
+    PROJECTS.sort()
+
+    [print(p) for p in PROJECTS]
+
+    # run preprocessing and inference
+    Parallel(n_jobs=N_JOBS)(
+        delayed(run_inference)(project, CONFIG_PREPROCESSING, CONFIG_INFERENCE)
+        for project in PROJECTS[:N_PROJECTS]
     )
 
-# sort projects by name
-PROJECTS.sort()
-
-[print(p) for p in PROJECTS]
+    # merge final results
+    merge_results(target_dir)
 
 
-def run_inference(project_name: str):
+def run_inference(project_name: str, config_preprocessing, config_inference):
     """
     Run inference on the project.
     """
     # run preprocessing
-    s_preprocessing = f'uv run convert_images.py --config {CONFIG_PREPROCESSING} --project-names "{project_name}'
+    s_preprocessing = f'uv run convert_images.py --config {config_preprocessing} --project-names "{project_name}'
     if not DRY_RUN:
         os.system(s_preprocessing)
 
     # run inference
-    s_inference = f'uv run dbh_inference --config {CONFIG_INFERENCE} --projects-to-run "{project_name}"'
+    s_inference = f'uv run dbh_inference --config {config_inference} --projects-to-run "{project_name}"'
     if not DRY_RUN:
         os.system(s_inference)
 
@@ -91,5 +117,5 @@ def merge_results(target_dir: Path):
 
 
 if __name__ == "__main__":
-    Parallel(n_jobs=N_JOBS)(delayed(run_inference)(project) for project in PROJECTS[:N_PROJECTS])
-    merge_results(target_dir)
+    # run full project
+    main()
