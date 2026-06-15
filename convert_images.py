@@ -19,9 +19,9 @@ def process_files(
     outdir: Path,
     mipps_bin: str,
     mipps_file: str,
-    jobs: int=60,
+    jobs: int = 60,
 ):
-    infiles = list(indir.glob("*RGB*/*"))
+    infiles = list(indir.glob("*RGB*/*"))  # + list(indir.glob("*3357*/*"))
     infiles = [f'"{str(f)}"' for f in infiles]  # get posix files
 
     # setup mipps call
@@ -92,7 +92,7 @@ def main(
     projects = [
         project for project in projects if not (out_dir_base / project.name).exists()
     ]
-    
+
     # filter to number of projects
     projects = projects[:n_projects]
 
