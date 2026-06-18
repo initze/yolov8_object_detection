@@ -19,8 +19,9 @@ def process_files(
     outdir: Path,
     mipps_bin: str,
     mipps_file: str,
+    jobs: int = 60,
 ):
-    infiles = list(indir.glob("*RGB*/*"))
+    infiles = list(indir.glob("*RGB*/*")) + list(indir.glob("33576_Cam-Right90/*")) + list(indir.glob("33577_Cam-Left90/*"))
     infiles = [f'"{str(f)}"' for f in infiles]  # get posix files
 
     # setup mipps call
@@ -32,7 +33,7 @@ def process_files(
     for df in tqdm(np.array_split(infiles, split)):
         outlist = " ".join(df)
         os.makedirs(outdir, exist_ok=True)
-        s = f'{mipps_bin} -c={mipps_file} -o="{outdir}" -j=4 {outlist}'
+        s = f'{mipps_bin} -c={mipps_file} -o="{outdir}" -j={jobs} {outlist}'
         # run mipps call
         os.system(s)
 
@@ -73,8 +74,11 @@ def main(
     """
     # List all subdirectories
     projects = [
-        x for x in data_dir.iterdir() if (x.is_dir() and x.name.startswith("202"))
+        x for x in data_dir.iterdir() if (x.is_dir() and x.name.startswith("20"))
     ]
+
+    # sort projects by name
+    projects.sort()
 
     # Filter to selected regex
     if filter:
