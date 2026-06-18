@@ -21,7 +21,7 @@ def process_files(
     mipps_file: str,
     jobs: int = 60,
 ):
-    infiles = list(indir.glob("*RGB*/*"))  # + list(indir.glob("*3357*/*"))
+    infiles = list(indir.glob("*RGB*/*")) + list(indir.glob("33576_Cam-Right90/*")) + list(indir.glob("33577_Cam-Left90/*"))
     infiles = [f'"{str(f)}"' for f in infiles]  # get posix files
 
     # setup mipps call
@@ -74,7 +74,7 @@ def main(
     """
     # List all subdirectories
     projects = [
-        x for x in data_dir.iterdir() if (x.is_dir() and x.name.startswith("202"))
+        x for x in data_dir.iterdir() if (x.is_dir() and x.name.startswith("20"))
     ]
 
     # sort projects by name
